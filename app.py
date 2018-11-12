@@ -1,4 +1,4 @@
-from pix import Pix
+from pix3_gallery.pix import Pix
 
 
 def application(env, start_response):
