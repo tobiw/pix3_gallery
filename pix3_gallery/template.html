@@ -1,0 +1,35 @@
+<html>
+	<head>
+		<title>@title@</title>
+		<link rel="stylesheet" href="style.css" type="text/css"/>
+	</head>
+	<body>
+		<table cellpadding="0" cellspacing="0" border="0">
+			<tr><td colspan="2">
+				<h1><a href="/">pix</a> @breadcrumb@</h1>
+				</td></tr>
+			<tr>
+				<td>
+					@albums@
+					@pics@
+				</td>
+				<td align="right" width="500">
+					<font size="-1"><div align="right"><b>@control@</b></div></font>
+					<table cellpadding="0" cellspacing="0" border="0" >
+						<tr><td>@web-pic@</td></tr>
+						<tr><td>@comment@</td></tr>
+					</table>
+					@album-description@
+				</td>
+			</tr>
+			<tr><td colspan="2">
+				<p class="footer">
+					<a target="_new" href="README">r</a>       |
+					@meta@
+					<br>
+					generated in @gen-time@ s
+				</p>
+			</td></tr>
+		</table>
+	</body>
+</html>

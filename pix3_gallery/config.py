@@ -1,4 +1,5 @@
 config = {
+    'title': 'pix',
     'albums': {
         'sort': {
             'enable': True,
