@@ -1,6 +1,7 @@
 import os
 import os.path
 from PIL import Image
+from .config import config
 
 
 class Pic:
@@ -28,7 +29,9 @@ class Pic:
             self._size = Image.open(self._path).size
         return self._size
 
-    def generate_resized(self, new_name, new_width, new_height):
+    def _generate_resized(self, new_name, new_size):
+        new_width, new_height = new_size
+
         original = Image.open(self._path)
         width, height = original.size
 
@@ -45,6 +48,11 @@ class Pic:
         new_image.save(new_name)
 
         return new_name
+
+    def generate_resized(self):
+        self._generate_resized(self.web_path, config['resize']['web'])
+        self._generate_resized(self.thumbnail_path,
+                               config['resize']['thumbnail'])
 
     @property
     def name(self):
