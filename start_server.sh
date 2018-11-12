@@ -2,10 +2,11 @@
 
 DEVELOPMENT=1
 
-APP=pix3_gallery/app.py
+APP=app.py
 PORT=7777
 
 . venv/bin/activate
+cd pix3_gallery
 
 if [ "$DEVELOPMENT" -eq 1 ]
 then
