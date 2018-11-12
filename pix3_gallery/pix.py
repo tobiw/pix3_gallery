@@ -26,8 +26,10 @@ class Pix:
         template = template.replace('@web-pic@', '')
         template = template.replace('@comment@', '')
         template = template.replace('@album-description@', '')
-        template = template.replace('@meta@', '')
-        template = template.replace('@gen-time@', str(time.time() - time_start))
+
+        time.sleep(0.2)
+        time_to_render = float(time.time() - time_start)
+        template = template.replace('@gen-time@', '{:.4f}'.format(time_to_render))
         return template
 
         r = ['<h2>Albums ({:d} items)</h2>'.format(len(self.root_album))]
