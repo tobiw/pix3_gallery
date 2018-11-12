@@ -9,12 +9,12 @@ class Pix:
             raise ValueError('album_path "{:s}" does not exist'.format(
                 config['album_path']))
 
-        self._albums = [Album(config['album_path'] + '/test_123')]
+        self.root_album = Album(config['album_path'])
 
     def get_output(self):
-        r = ['<h2>Albums</h2>']
-        for a in self._albums:
+        r = ['<h2>Albums ({:d} items)</h2>'.format(len(self.root_album))]
+        for a in self.root_album.albums:
             r.append('<li><a href="{:s}">{:s}</a></li>'.format(
-                a.name, a.url))
+                a.url, a.name))
 
         return '<br>\n'.join(r)
