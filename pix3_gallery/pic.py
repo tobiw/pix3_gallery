@@ -1,15 +1,13 @@
 import os
+import os.path
 from PIL import Image
 
 
 class Pic:
     """Handles an individual picture."""
     def __init__(self, path):
-        self._path = path
-
-    @property
-    def comment(self):
-        pass
+        self._path = path.replace('//', '/')
+        self._size = None
 
     @property
     def web_path(self):
@@ -18,6 +16,17 @@ class Pic:
     @property
     def thumbnail_path(self):
         return '.thumb_' + self._path
+
+    def _get_resized_pic_path(self, prefix):
+        filename_begin = self._path.rfind(os.sep) + 1
+        return '{:s}.{:s}_{:s}'.format(
+            self._path[:filename_begin], prefix, self._path[filename_begin:])
+
+    @property
+    def size(self):
+        if self._size is None:
+            self._size = Image.open(self._path).size
+        return self._size
 
     def generate_resized(self, new_name, new_width, new_height):
         original = Image.open(self._path)
@@ -47,6 +56,24 @@ class Pic:
     @property
     def filename(self):
         return self._path[self._path.rfind(os.sep) + 1:]
+
+    @property
+    def comment(self):
+        if str(self) == '':
+            return ''
+
+        name_begin = self._path.rfind(os.sep)
+        directory = self._path[:name_begin]
+
+        meta_filename = '{:s}{:s}.meta'.format(directory, os.sep)
+        if os.path.exists(meta_filename):
+            with open(meta_filename, 'r') as f:
+                comment_lines = [l for l in f.readlines() if '=' in l]
+
+            for image_name, comment in [l.split('=') for l in comment_lines]:
+                if image_name.strip() == self.filename:
+                    return comment.strip()
+        return ''
 
     def __str__(self):
         return self._path

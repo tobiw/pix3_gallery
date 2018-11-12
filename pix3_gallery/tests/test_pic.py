@@ -22,8 +22,8 @@ class TestPic:
     def test_multiple_seperators(self):
         assert_equal(str(Pic('test1//test2.png')._path), 'test1/test2.png')
 
-    def test_album_dir_split(self):
-        assert_equal(str(Pic('test 111/test 222/test3.png').album_path), 'test 111/test 222')
+    # def test_album_dir_split(self):
+        # assert_equal(str(Pic('test 111/test 222/test3.png').album_path), 'test 111/test 222')
 
     def test_filename_split(self):
         assert_equal(Pic('test 111/test 222/test3.png').filename, 'test3.png')
@@ -62,7 +62,7 @@ class TestPicMeta:
         self.pic = Pic(os.path.join(TESTALBUM, TESTIMG))
 
     def test_comment(self):
-        comment = self.pic.get_comment()
+        comment = self.pic.comment
         assert comment == 'test_comment 123', comment
 
 
@@ -84,52 +84,50 @@ class TestPicResized:
             os.remove(f)
 
     def test_thumb(self):
-        thumb = self.pic.get_thumb()
-        assert_equal(thumb, '.thumb_' + TESTIMG)
-        assert os.path.exists(thumb)
+        assert_equal(self.pic.thumbnail_path, '.thumb_' + TESTIMG)
+        assert os.path.exists(self.pic.thumbnail_path), '{!s} does not exist'.format(self.pic.thumbnail_path)
 
     def test_web(self):
-        web = self.pic.get_web()
-        assert_equal(web, '.web_' + TESTIMG)
-        assert os.path.exists(web)
+        assert_equal(self.pic.web_path, '.web_' + TESTIMG)
+        assert os.path.exists(self.pic.web_path), '{!s} does not exist'.format(self.pic.web_path)
 
     def test_try_recreate_resized(self):
         for i in range(2):
-            assert_equal(self.pic.get_web(), '.web_' + TESTIMG)
+            assert_equal(self.pic.web_path, '.web_' + TESTIMG)
 
     def test_try_recreate_cropped(self):
         Pic._config['crop-thumbnails'] = True
         for i in range(2):
-            assert_equal(self.pic.get_thumb(), '.thumb_' + TESTIMG)
+            assert_equal(self.pic.thumbnail_path, '.thumb_' + TESTIMG)
 
     def test_thumb_size_resized(self):
-        self.pic.get_thumb()
+        self.pic.thumbnail_path
         assert_equal(_get_image_size('.thumb_' + TESTIMG), (80, 60))
 
     def test_thumb_size_cropped(self):
         Pic._config['crop-thumbnails'] = True
-        self.pic.get_thumb()
+        self.pic.thumbnail_path
         assert_equal(_get_image_size('.thumb_' + TESTIMG), (80, 80))
 
     def test_web_size(self):
-        self.pic.get_web()
+        self.pic.web_path
         assert_equal(_get_image_size('.web_' + TESTIMG), (500, 375))
 
     def test_thumb_size_resized_custom(self):
         expected_size = (160, 120)
         Pic._config['thumbnail-size'] = expected_size
-        self.pic.get_thumb()
+        self.pic.thumbnail_path
         assert_equal(_get_image_size('.thumb_' + TESTIMG), expected_size)
 
     def test_thumb_size_cropped_custom(self):
         Pic._config['crop-thumbnails'] = True
         expected_size = 120
         Pic._config['thumbnail-size'] = expected_size
-        self.pic.get_thumb()
+        self.pic.thumbnail_path
         assert_equal(_get_image_size('.thumb_' + TESTIMG), (expected_size, expected_size))
 
     def test_web_size_custom(self):
         expected_size = (640, 480)
         Pic._config['web-size'] = expected_size
-        self.pic.get_web()
+        self.pic.web_path
         assert_equal(_get_image_size('.web_' + TESTIMG), expected_size)
