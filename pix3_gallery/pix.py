@@ -13,7 +13,7 @@ class Pix:
         self.root_album = Album(config['album_path'])
 
     def get_output(self):
-        with open('template.html', 'r') as f:
+        with open('static/template.html', 'r') as f:
             template = f.read()
 
         time_start = time.time()
