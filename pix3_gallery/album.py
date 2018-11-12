@@ -4,6 +4,26 @@ from .config import config
 from .pic import Pic
 
 
+class AlbumPresenter:
+    def __init__(self, album):
+        if not isinstance(album, Album):
+            raise TypeError('album has to be of type Album')
+
+        self._album = album
+
+    def __repr__(self):
+        return '{:s}({!r})'.format(self.__class__.__name__, self._album)
+
+    def render_subalbums(self):
+        return 'Sub-album1\nSub-album2'
+
+    def render_pictures(self):
+        return 'Pic Pic Pic Pic\nPic Pic Pic Pic'
+
+    def render_description(self):
+        return 'Description ...'
+
+
 class Album:
     """
     Data structure that loads and represents an album in the filesystem.

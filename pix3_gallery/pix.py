@@ -1,6 +1,6 @@
 import os.path
 import time
-from .album import Album
+from .album import Album, AlbumPresenter
 from .config import config
 
 
@@ -11,6 +11,7 @@ class Pix:
                 config['album_path']))
 
         self.root_album = Album(config['album_path'])
+        self.root_album_presenter = AlbumPresenter(self.root_album)
 
     def get_output(self):
         with open('static/template.html', 'r') as f:
@@ -20,8 +21,8 @@ class Pix:
 
         template = template.replace('@title@', config['title'])
         template = template.replace('@breadcrumb@', '')
-        template = template.replace('@albums@', '')
-        template = template.replace('@pics@', '')
+        template = template.replace('@albums@', self.root_album_presenter.render_subalbums())
+        template = template.replace('@pics@', self.root_album_presenter.render_pictures())
         template = template.replace('@control@', '')
         template = template.replace('@web-pic@', '')
         template = template.replace('@comment@', '')

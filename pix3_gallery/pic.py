@@ -43,8 +43,8 @@ class Pic:
 
         new_height = (height * new_width) / width
         new_image = original.resize(
-                (new_width, new_height),
-                resample=Image.ANTIALIAS)
+            (new_width, new_height),
+            resample=Image.ANTIALIAS)
         new_image.save(new_name)
 
         return new_name
