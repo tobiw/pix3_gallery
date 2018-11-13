@@ -30,10 +30,12 @@ class Pix:
 
     # /album/<name> or /album/<subalbum>/<name>
     def get_album_output(self, template, album_name):
-        template = template.replace('@album-description@', self.album_presenter.render_description())
+        presenter = self.album_presenter.get_album('album/' + album_name)
+
+        template = template.replace('@album-description@', presenter.render_description())
         template = template.replace('@albums@', 'Showing album ' + album_name)
         # TODO: get correct album
-        template = template.replace('@pics@', self.album_presenter.render_pictures())
+        template = template.replace('@pics@', presenter.render_pictures())
         return template
 
     def do_routing(self, request_uri, template):

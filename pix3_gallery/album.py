@@ -11,6 +11,9 @@ class AlbumPresenter:
 
         self._album = album
 
+    def get_album(self, album_name):
+        return AlbumPresenter(self._album.get_subalbum(album_name))
+
     def __repr__(self):
         return '{:s}({!r})'.format(self.__class__.__name__, self._album)
 
@@ -36,6 +39,11 @@ class Album:
 
         if recurse:
             self._load_album()
+
+    def get_subalbum(self, album_url):
+        for a in self._albums:
+            if a.url == album_url:
+                return a
 
     def _has_supported_picture_file_types(self, entry):
         return any(entry.lower().endswith('.' + ext)
@@ -64,6 +72,7 @@ class Album:
 
     @property
     def name(self):
+        """Removes filesystem album root path and returns full name of album"""
         p = self._path.replace(config['album_path'], '').replace('_', ' ')
         if p[0] == '/':
             p = p[1:]
@@ -71,6 +80,7 @@ class Album:
 
     @property
     def url(self):
+        """Generates the URL for the album (perma-link)"""
         p = self._path.replace(config['album_path'], '')
         if p[0] == '/':
             p = p[1:]
