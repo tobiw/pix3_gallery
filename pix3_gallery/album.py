@@ -4,6 +4,10 @@ from .config import config
 from .pic import Pic
 
 
+class AlbumNotFoundError(Exception):
+    pass
+
+
 class AlbumPresenter:
     """
     View class for an album.
@@ -46,23 +50,38 @@ class Album:
     Model and loading controller only, does not do any view functionality.
     """
     def __init__(self, path, recurse=True):
+        """
+        Initialises a new Album model instance.
+        path is the filesystem path to the album (must be a folder).
+        recurse is used to stop recursing into sub-folders.
+        """
         self._path = path
         self._albums = []
         self._pics = []
 
+        if not os.path.isdir(path):
+            raise ValueError('Path "{:s}" must be a directory'.format(path))
+
+        # Ensure there is no trailing slash on path
+        if self._path[-1] == '/':
+            self._path = self._path[:-1]
+
         if recurse:
             self._load_album()
 
-    def get_subalbum(self, album_url):
+    def get_subalbum(self, album_name):
+        """Return the model instance for a sub-album of the current album."""
         for a in self._albums:
-            if a.url == album_url:
+            if a.directory_name == album_name:
                 return a
+        raise AlbumNotFoundError(album_name)
 
     def _has_supported_picture_file_types(self, entry):
         return any(entry.lower().endswith('.' + ext)
                    for ext in config['supported_file_types'])
 
     def _load_album(self):
+        """Load pictures and sub-albums of the current album and append to albums and pics lists."""
         for entry in os.listdir(self._path):
             if entry[0] == '.':  # special file or resized image file
                 continue
@@ -83,24 +102,30 @@ class Album:
         if config['pictures']['sort']['enable']:
             self._pics = sorted(self._pics, key=lambda p: p.filename)
 
+    def _remove_album_path(self, p):
+        r = p.replace(config['album_path'], '')
+        if r and r[0] == '/':
+            r = r[1:]
+        return r
+
+    @property
+    def directory_name(self):
+        """Returns the album's directory name only (instead of full path), including parent album(s)"""
+        return self._remove_album_path(self._path)
+
     @property
     def name(self):
-        """Removes filesystem album root path and returns full name of album"""
-        p = self._path.replace(config['album_path'], '').replace('_', ' ')
-        if p[0] == '/':
-            p = p[1:]
-        return p + ' ({:d})'.format(len(self))
+        """Removes filesystem album root path and returns full pretty name of album"""
+        return self.directory_name.replace('_', ' ') + ' ({:d})'.format(len(self))
 
     @property
     def url(self):
         """Generates the URL for the album (perma-link)"""
-        p = self._path.replace(config['album_path'], '')
-        if p[0] == '/':
-            p = p[1:]
-        return 'album/' + p
+        return '/album/' + self.directory_name
 
     @property
     def albums(self):
+        """Returns list of sub-albums"""
         return self._albums
 
     def __str__(self):
