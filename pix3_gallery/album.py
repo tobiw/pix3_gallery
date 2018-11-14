@@ -5,25 +5,38 @@ from .pic import Pic
 
 
 class AlbumPresenter:
+    """
+    View class for an album.
+    It takes the model (Album) as an input and can generate various outputs for
+    the web app. Any sub-album will generate a new AlbumPresenter.
+    """
     def __init__(self, album):
         if not isinstance(album, Album):
             raise TypeError('album has to be of type Album')
 
         self._album = album
 
-    def get_album(self, album_name):
+    def get_subalbum(self, album_name):
+        """Creates a new AlbumPresenter instance for the given sub-album"""
         return AlbumPresenter(self._album.get_subalbum(album_name))
 
     def __repr__(self):
         return '{:s}({!r})'.format(self.__class__.__name__, self._album)
 
     def render_subalbums(self):
-        return 'Sub-album1\nSub-album2'
+        """Render output for list of sub-albums"""
+        return '<br>'.join('<a href="{url:s}">{name:s}</a>'.format(
+                           url=a.url, name=a.name)
+                           for a in self._album.albums)
 
     def render_pictures(self):
-        return 'Pic Pic Pic Pic\nPic Pic Pic Pic'
+        """Render output for picture gallery"""
+        return '<br>'.join('<a href="{url:s}"><img src="{src:s}"/></a>'.format(
+                           url=p.web_image, src=p.thumb_image)
+                           for p in self._album._pics)  # TODO: use PicPresenter
 
     def render_description(self):
+        """Render output for album description"""
         return 'Description ...'
 
 

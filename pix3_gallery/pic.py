@@ -10,13 +10,22 @@ class Pic:
         self._path = path.replace('//', '/')
         self._size = None
 
+    @staticmethod
+    def _get_prefixed_path(path, prefix):
+        """
+        >>> Pic._get_prefixed_path('/tmp/test', '.web_')
+        '/tmp/.web_test'
+        """
+        prepath, filename = path.rsplit('/', 1)
+        return '{:s}/{:s}{:s}'.format(prepath, prefix, filename)
+
     @property
     def web_path(self):
-        return '.web_' + self._path
+        return self._get_prefixed_path(self._path, '.web_')
 
     @property
     def thumbnail_path(self):
-        return '.thumb_' + self._path
+        return self._get_prefixed_path(self._path, '.thumb_')
 
     def _get_resized_pic_path(self, prefix):
         filename_begin = self._path.rfind(os.sep) + 1
@@ -41,18 +50,33 @@ class Pic:
             if os.path.exists(new_name):
                 return new_name
 
-        new_height = (height * new_width) / width
+        # Calculate new height with correct aspect ratio and scale image
+        new_height = int((height * new_width) / width)
         new_image = original.resize(
             (new_width, new_height),
             resample=Image.ANTIALIAS)
+
+        target_width, target_height = new_size
+        if new_width > target_width or new_height > target_height:  # requires further cropping
+            center_x, center_y = new_width // 2, new_height // 2
+            new_image = new_image.crop((center_x - target_width // 2, center_y - target_height // 2,
+                                        center_x + target_width // 2, center_y + target_height // 2))
         new_image.save(new_name)
 
         return new_name
 
-    def generate_resized(self):
-        self._generate_resized(self.web_path, config['resize']['web'])
-        self._generate_resized(self.thumbnail_path,
-                               config['resize']['thumbnail'])
+    @property
+    def web_image(self):
+        """Generates a web-resized image and provides a URL to the file"""
+        p = self._generate_resized(self.web_path, config['resize']['web'])
+        return p.replace('/tmp/album', '/pic')
+
+    @property
+    def thumb_image(self):
+        """Generates a thumbnail-resized image and provides a URL to the file"""
+        p = self._generate_resized(self.thumbnail_path,
+                                   config['resize']['thumbnail'])
+        return p.replace('/tmp/album', '/pic')
 
     @property
     def name(self):
