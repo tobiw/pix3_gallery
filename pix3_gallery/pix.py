@@ -27,6 +27,7 @@ class Pix:
         template = template.replace('@breadcrumb@', '')
         template = template.replace('@albums@', self.album_presenter.render_subalbums())
         template = template.replace('@pics@', '')
+        template = template.replace('@album-description@', '')
         return template
 
     def _get_subalbum_presenter(self, album_name):
