@@ -53,7 +53,7 @@ class AlbumPresenter:
 
     def render_description(self):
         """Render output for album description"""
-        return 'Description ...'
+        return self._album.comment
 
 
 class Album:
@@ -104,7 +104,7 @@ class Album:
                 if os.path.isdir(entry_path):  # sub album
                     self._albums.append(Album(entry_path, recurse=True))
                 elif os.path.isfile(entry_path):  # picture
-                    self._pics.append(Pic(entry_path))
+                    self._pics.append(Pic(entry_path, self))
 
         # Sort albums and pictures by name
         if config['albums']['sort']['enable']:
@@ -139,6 +139,21 @@ class Album:
     def albums(self):
         """Returns list of sub-albums"""
         return self._albums
+
+    @property
+    def comment(self):
+        """Returns the album comment (start of meta file to empty line)"""
+        lines = self.get_meta_file().splitlines()
+        empty_line_index = lines.index('')
+        return '<br>'.join(lines[:empty_line_index])
+
+    def get_meta_file(self):
+        """Reads and returns the contents of the .meta file in the album"""
+        try:
+            with open(self._path + '/.meta', 'r') as f:
+                return f.read()
+        except IOError:
+            return ''
 
     def __str__(self):
         return self.name

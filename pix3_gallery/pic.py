@@ -6,8 +6,14 @@ from .config import config
 
 class Pic:
     """Handles an individual picture."""
-    def __init__(self, path):
+    def __init__(self, path, album):
+        if not path:
+            raise ValueError('Invalid argument (path: {!r})'.format(path))
+        if album is None:
+            raise ValueError('Invalid argument (album: {!r})'.format(album))
+
         self._path = path.replace('//', '/')
+        self._album = album
         self._size = None
 
     @staticmethod
@@ -91,20 +97,16 @@ class Pic:
 
     @property
     def comment(self):
-        if str(self) == '':
-            return ''
+        meta = self._album.get_meta_file()
+        lines = meta.splitlines()
 
-        name_begin = self._path.rfind(os.sep)
-        directory = self._path[:name_begin]
+        empty_line_index = lines.index('')
 
-        meta_filename = '{:s}{:s}.meta'.format(directory, os.sep)
-        if os.path.exists(meta_filename):
-            with open(meta_filename, 'r') as f:
-                comment_lines = [l for l in f.readlines() if '=' in l]
-
-            for image_name, comment in [l.split('=') for l in comment_lines]:
-                if image_name.strip() == self.filename:
-                    return comment.strip()
+        for line in lines[empty_line_index + 1:]:  # only go through <filename>=<comment> lines
+            assert '=' in line, line
+            filename, comment = line.split('=', 1)
+            if filename == self.filename:
+                return comment
         return ''
 
     def __str__(self):
