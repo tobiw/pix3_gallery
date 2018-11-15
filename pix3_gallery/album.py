@@ -144,14 +144,21 @@ class Album:
     def comment(self):
         """Returns the album comment (start of meta file to empty line)"""
         lines = self.get_meta_file().splitlines()
-        empty_line_index = lines.index('')
-        return '<br>'.join(lines[:empty_line_index])
+        if not lines:
+            return
+
+        try:
+            empty_line_index = lines.index('')
+        except ValueError:  # could not find empty line
+            return ''
+        else:
+            return '<br>'.join(lines[:empty_line_index])
 
     def get_meta_file(self):
         """Reads and returns the contents of the .meta file in the album"""
         try:
             with open(self._path + '/.meta', 'r') as f:
-                return f.read()
+                return f.read().strip()
         except IOError:
             return ''
 

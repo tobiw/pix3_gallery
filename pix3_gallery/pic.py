@@ -98,6 +98,9 @@ class Pic:
     @property
     def comment(self):
         meta = self._album.get_meta_file()
+        if not meta:
+            return
+
         lines = meta.splitlines()
 
         empty_line_index = lines.index('')
