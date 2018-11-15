@@ -35,9 +35,21 @@ class AlbumPresenter:
 
     def render_pictures(self):
         """Render output for picture gallery"""
-        return '<br>'.join('<a href="{url:s}"><img src="{src:s}"/></a>'.format(
-                           url=p.web_image, src=p.thumb_image)
-                           for p in self._album._pics)  # TODO: use PicPresenter
+        # Start gallery div
+        lines = ['<div class="baguetteBox gallery">']
+
+        # Add images and links
+        lines += ['<a href="{url:s}"><img src="{src:s}" alt="{alt:s}"/></a>'.format(
+            url=p.web_image, src=p.thumb_image, alt=p.comment)
+            for p in self._album._pics]
+
+        # Close gallery div and run baguetteBox
+        lines += [
+            '</div>',
+            '<script>window.onload = function() { baguetteBox.run(".baguetteBox"); };</script>'
+        ]
+
+        return '\n'.join(lines)
 
     def render_description(self):
         """Render output for album description"""
