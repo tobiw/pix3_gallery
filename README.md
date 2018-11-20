@@ -35,8 +35,8 @@ Configuration files and scripts for FreeBSD rc.d and nginx are provided in etc/.
 
 # Development
 Use the following commands to run a development server (no need for an external webserver):
-
-  virtualenv -p python3 venv
-  . venv/bin/activate
-  pip3 install -r requirements.txt
-  uwsgi --http :8080 --wsgi-file app.py --static-map "/static=./static" --static-map "/pic=/tmp/album"
+```virtualenv -p python3 venv
+. venv/bin/activate
+pip3 install -r requirements.txt
+uwsgi --http :8080 --wsgi-file app.py --static-map "/static=./static" --static-map "/pic=/tmp/album"
+```
