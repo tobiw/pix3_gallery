@@ -1,0 +1,30 @@
+#!/bin/sh
+
+# PROVIDE: uwsgi
+# REQUIRE: LOGIN cleanvar
+# KEYWORD: shutdown
+
+. /etc/rc.subr
+
+INSTALL_DIR=/usr/local/www/pix3_gallery
+name="uwsgi"
+rcvar=${name}_enable
+
+_pidprefix="/var/run"
+pidfile="${_pidprefix}/${name}.pid"
+start_precmd="${name}_precmd"
+command="$INSTALL_DIR/venv/bin/${name}"
+command_args="--ini $INSTALL_DIR/app.ini --pidfile $pidfile"
+
+[ -z "$uwsgi_enable" ]          && nginx_enable="NO"
+
+uwsgi_precmd()
+{
+  [ -f $pidfile] && rm $pidfile
+  . $INSTALL_DIR/venv/bin/activate
+  cd $INSTALL_DIR
+}
+
+load_rc_config $name
+
+run_rc_command "$1"

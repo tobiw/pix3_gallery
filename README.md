@@ -29,3 +29,14 @@ See requirements.txt for list of packages required. When installing the package 
 
 * pillow: image processing library, used to generate smaller versions and thumbnails of pictures
 * uswgi: interface to the web server
+
+# Installation
+Configuration files and scripts for FreeBSD rc.d and nginx are provided in etc/.
+
+# Development
+Use the following commands to run a development server (no need for an external webserver):
+
+  virtualenv -p python3 venv
+  . venv/bin/activate
+  pip3 install -r requirements.txt
+  uwsgi --http :8080 --wsgi-file app.py --static-map "/static=./static" --static-map "/pic=/tmp/album"
