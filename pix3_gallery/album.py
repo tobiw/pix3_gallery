@@ -40,7 +40,7 @@ class AlbumPresenter:
 
         # Add images and links
         lines += ['<a href="{url:s}"><img src="{src:s}" alt="{alt:s}"/></a>'.format(
-            url=p.web_image, src=p.thumb_image, alt=p.comment)
+            url=p.web_image, src=p.thumb_image, alt=p.comment or '')
             for p in self._album._pics]
 
         # Close gallery div and run baguetteBox
