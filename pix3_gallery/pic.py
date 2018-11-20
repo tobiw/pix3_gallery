@@ -44,7 +44,7 @@ class Pic:
             self._size = Image.open(self._path).size
         return self._size
 
-    def _generate_resized(self, new_name, new_size):
+    def _generate_resized(self, new_name, new_size, crop):
         new_width, new_height = new_size
 
         original = Image.open(self._path)
@@ -63,10 +63,11 @@ class Pic:
             resample=Image.ANTIALIAS)
 
         target_width, target_height = new_size
-        if new_width > target_width or new_height > target_height:  # requires further cropping
-            center_x, center_y = new_width // 2, new_height // 2
-            new_image = new_image.crop((center_x - target_width // 2, center_y - target_height // 2,
-                                        center_x + target_width // 2, center_y + target_height // 2))
+        if crop:
+            if new_width > target_width or new_height > target_height:  # requires further cropping
+                center_x, center_y = new_width // 2, new_height // 2
+                new_image = new_image.crop((center_x - target_width // 2, center_y - target_height // 2,
+                                            center_x + target_width // 2, center_y + target_height // 2))
         new_image.save(new_name)
 
         return new_name
@@ -74,14 +75,16 @@ class Pic:
     @property
     def web_image(self):
         """Generates a web-resized image and provides a URL to the file"""
-        p = self._generate_resized(self.web_path, config['resize']['web'])
+        p = self._generate_resized(self.web_path, config['resize']['web'],
+                                   crop=False)
         return p.replace(config['album_path'], '/pic')
 
     @property
     def thumb_image(self):
         """Generates a thumbnail-resized image and provides a URL to the file"""
         p = self._generate_resized(self.thumbnail_path,
-                                   config['resize']['thumbnail'])
+                                   config['resize']['thumbnail'],
+                                   crop=True)
         return p.replace(config['album_path'], '/pic')
 
     @property
