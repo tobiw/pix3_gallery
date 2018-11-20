@@ -56,18 +56,24 @@ class Pic:
             if os.path.exists(new_name):
                 return new_name
 
-        # Calculate new height with correct aspect ratio and scale image
-        new_height = int((height * new_width) / width)
+        if crop:
+            if width > height:  # need to keep new_width larger for cropping
+                new_width = int((width * new_height) / height)
+            elif height > width:  # need to keep new_height larger for cropping
+                new_height = int((height * new_width) / width)
+        else:
+            # Calculate new height with correct aspect ratio and scale image
+            new_height = int((height * new_width) / width)
+
         new_image = original.resize(
             (new_width, new_height),
             resample=Image.ANTIALIAS)
 
         target_width, target_height = new_size
-        if crop:
-            if new_width > target_width or new_height > target_height:  # requires further cropping
-                center_x, center_y = new_width // 2, new_height // 2
-                new_image = new_image.crop((center_x - target_width // 2, center_y - target_height // 2,
-                                            center_x + target_width // 2, center_y + target_height // 2))
+        if crop and new_width != new_height:  # crop required and pic not square yet
+            center_x, center_y = new_width // 2, new_height // 2
+            new_image = new_image.crop((center_x - target_width // 2, center_y - target_height // 2,
+                                        center_x + target_width // 2, center_y + target_height // 2))
         new_image.save(new_name)
 
         return new_name
