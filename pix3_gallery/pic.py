@@ -75,14 +75,14 @@ class Pic:
     def web_image(self):
         """Generates a web-resized image and provides a URL to the file"""
         p = self._generate_resized(self.web_path, config['resize']['web'])
-        return p.replace('/tmp/album', '/pic')
+        return p.replace(config['album_path'], '/pic')
 
     @property
     def thumb_image(self):
         """Generates a thumbnail-resized image and provides a URL to the file"""
         p = self._generate_resized(self.thumbnail_path,
                                    config['resize']['thumbnail'])
-        return p.replace('/tmp/album', '/pic')
+        return p.replace(config['album_path'], '/pic')
 
     @property
     def name(self):
