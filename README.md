@@ -33,6 +33,15 @@ See requirements.txt for list of packages required. When installing the package 
 # Installation
 Configuration files and scripts for FreeBSD rc.d and nginx are provided in etc/.
 
+pix3 web app configuration can be found in pix3_gallery/config.py. The most important option to adjust is probably the album_path on the local file system.
+
+uWSGI can be further configured within app.ini, e.g. number of processes, daemon-mode.
+
+Settings that have to match across different config files and processes:
+* uWSGI socket path: app.ini and nginx.conf
+* album_path: config.py and nginx.conf
+* location of pix3 installation in etc/rc.d/uwsgi
+
 # Development
 Use the following commands to run a development server (no need for an external webserver):
 ```virtualenv -p python3 venv
