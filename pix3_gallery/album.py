@@ -30,7 +30,7 @@ class AlbumPresenter:
     def render_subalbums(self):
         """Render output for list of sub-albums"""
         return '<br>'.join('<a href="{url:s}">{name:s}</a>'.format(
-                           url=a.url, name=a.name)
+                           url=a.url, name=a.name.rsplit('/', 1)[-1])
                            for a in self._album.albums)
 
     def render_pictures(self):
