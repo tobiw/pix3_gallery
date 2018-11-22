@@ -30,6 +30,8 @@ See requirements.txt for list of packages required. When installing the package 
 * pillow: image processing library, used to generate smaller versions and thumbnails of pictures
 * uswgi: interface to the web server
 
+Furthermore, the system package exiftran is required (not installed through pip).
+
 # Installation
 Configuration files and scripts for FreeBSD rc.d and nginx are provided in etc/.
 
